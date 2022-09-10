@@ -4,12 +4,29 @@ function App() {
   const [textTodos, setTextTodos] = useState("");
   const [todos, setTodos] = useState([]);
 
+  const changeIsDone = (id) => {
+    const searchedTodos = todos.find((item) => item.id === id);
+    const updatedTodos = {
+      ...searchedTodos,
+      isDone: !searchedTodos.isDone,
+    };
+    const filteredTodos = todos.filter((item) => item.id !== id);
+    setTodos([updatedTodos, ...filteredTodos]);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (textTodos === "") {
       alert("This can not be empty");
       return;
     }
+    const hasTodos = todos.find((item) => item.text === textTodos);
+    console.log(hasTodos);
+    if (hasTodos !== undefined) {
+      alert("You have the todo already");
+      return;
+    }
+
     const newTodo = {
       id: new Date().getTime(),
       text: textTodos,
@@ -17,6 +34,7 @@ function App() {
       date: new Date(),
     };
     setTodos([newTodo, ...todos]);
+    setTextTodos("");
   };
 
   return (
@@ -48,8 +66,17 @@ function App() {
       ) : (
         <div>
           {todos.map((item) => (
-            <div className="alert alert-secondary my-5" role="alert">
-              {item.text}
+            <div
+              className="alert alert-secondary my-3 d-flex justify-content-between"
+              role="alert"
+            >
+              <p>{item.text}</p>
+              <button
+                onClick={() => changeIsDone(item.id)}
+                className="btn btn-sm btn-success"
+              >
+                {item.isDone === false ? "Done" : "Undone"}
+              </button>
             </div>
           ))}
         </div>
